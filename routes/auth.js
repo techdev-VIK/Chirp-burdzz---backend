@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/User');
+const ChirpUser = require('../models/User');
 
 const dotenv = require('dotenv');
 
@@ -22,7 +22,7 @@ router.post("/register", async(req, res) => {
     const {username, password} = req.body;
 
     try {
-        const existingUser = await User.findOne({username});
+        const existingUser = await ChirpUser.findOne({username});
 
         if(existingUser){
             return res.status(400).json({message: "User already exists. Please login."})
@@ -30,10 +30,11 @@ router.post("/register", async(req, res) => {
 
         const salt = await bcrypt.genSalt(10);
 
-        const hashedPassword = await bycrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-        const user = new User({username: username, password: hashedPassword});
+        const user = new ChirpUser({username: username, password: hashedPassword});
 
+        await user.save();
 
         const token = jwt.sign({id: user._id}, JWT_SECRET, {expiresIn: "4h"});
         
@@ -49,7 +50,7 @@ router.post("/login", async(req, res) => {
     const {username, password} = req.body;
 
     try {
-        const user = await User.findOne({username});
+        const user = await ChirpUser.findOne({username});
 
         if(!user) return res.status(404).json({message: "User not found."});
 

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const bcrypt = require('bcrypt');
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     username:{
         type: String,
         required: true,
@@ -20,12 +20,12 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
-UserSchema.methods.comparePassword = async function (password){
+userSchema.methods.comparePassword = async function (password){
     return bcrypt.compare(password, this.password);
 }
 
 
-const User = mongoose.model("User", UserSchema);
+const ChirpUser = mongoose.model("ChirpUser", userSchema);
 
 
-module.exports = User;
+module.exports = ChirpUser;
